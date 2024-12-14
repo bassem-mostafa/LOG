@@ -1,0 +1,9 @@
+[submodule "port/Windows"]
+	path = port/Windows
+	url = https://github.com/bassem-mostafa/LOG_Windows.git
+[submodule "port/Stub"]
+	path = port/Stub
+	url = https://github.com/bassem-mostafa/LOG_Stub.git
+[submodule "port/Flow_Meter"]
+	path = port/Flow_Meter
+	url = https://github.com/bassem-mostafa/LOG_Flow_Meter.git
