@@ -101,15 +101,13 @@ extern "C"
     typedef enum LOG_Level
     {
         LOG_Level_Default = 0, ///< Default
-
         LOG_Level_Trace,       ///< Trace
         LOG_Level_Debug,       ///< Debug
         LOG_Level_Information, ///< Information
         LOG_Level_Warning,     ///< Warning
         LOG_Level_Error,       ///< Error
         LOG_Level_Fatal,       ///< Fatal
-
-        LOG_Level_None, ///< None
+        LOG_Level_None,        ///< None
     } LOG_Level_t;
 
     /**
