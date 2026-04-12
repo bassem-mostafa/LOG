@@ -62,7 +62,7 @@ extern "C"
     // #### Public Type(s) #########################################################
     // #############################################################################
 
-    typedef struct LOG_Instance_Context LOG_Instance_Context_t;
+    typedef struct LOG_InstanceContext LOG_InstanceContext_t;
 
     typedef struct LOG_Instance
     {
@@ -71,7 +71,7 @@ extern "C"
 
         union
         {
-            LOG_Instance_Context_t * Context;
+            LOG_InstanceContext_t * Context;
         };
     } LOG_Instance_t;
 
