@@ -103,6 +103,7 @@ extern "C"
 
     LOG_Status_t LOG_Port_SetLevel( LOG_t LOGx, LOG_Level_t Level );
 
+    LOG_Status_t LOG_Port_Prefix( LOG_t LOGx, LOG_Level_t Level );
     LOG_Status_t LOG_Port_Write( LOG_t LOGx, LOG_Level_t Level, LOG_Format_t Format, LOG_Args_t Args );
 
     // TODO Add More APIs
