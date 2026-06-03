@@ -48,7 +48,7 @@ extern "C"
     // #### Include(s) #############################################################
     // #############################################################################
 
-    #include "LOG_Port.h"
+    #include "LOG.h"
 
     // #############################################################################
     // #### Public Macro(s) ########################################################
@@ -62,33 +62,48 @@ extern "C"
     // #### Public Type(s) #########################################################
     // #############################################################################
 
-    typedef struct LOG_InstanceContext LOG_InstanceContext_t;
+    typedef enum LOG_Type
+    {
+        LOG_Type_Unknown = 0,
+        LOG_Type_Null,
+        LOG_Type_USB,
+        LOG_Type_UART,
+        LOG_Type_CLI,
+    } LOG_Type_t;
 
     typedef struct LOG_Instance
     {
-        LOG_t LOGx;
-        LOG_Level_t Level;
+        LOG_Type_t Type;
 
         union
         {
-            LOG_InstanceContext_t * Context;
+            struct
+            {
+                USB_t Instance;
+                USB_Interface_t Interface;
+            } USBx;
+
+            UART_t UARTx;
+            CLI_t CLIx;
         };
+
+        LOG_Level_t Level;
+
+        BUFFER_t Transmit;
     } LOG_Instance_t;
 
     // #############################################################################
     // #### Public Method(s) #######################################################
     // #############################################################################
 
-    LOG_Status_t LOG_Level_IsValid( LOG_Level_t Level );
-
     // The following APIs MUST be provided by the port
-    LOG_Status_t LOG_IsValid( LOG_t LOGx );
+    LOG_Status_t LOG_Port_Initialize( LOG_t LOGx );
+    LOG_Status_t LOG_Port_Cycle( LOG_t LOGx );
+    LOG_Status_t LOG_Port_DeInitialize( LOG_t LOGx );
 
-    LOG_Status_t LOG_Instance_Initialize( LOG_Instance_t * Instance );
-    LOG_Status_t LOG_Instance_Cycle( LOG_Instance_t * Instance );
-    LOG_Status_t LOG_Instance_DeInitialize( LOG_Instance_t * Instance );
+    LOG_Status_t LOG_Port_SetLevel( LOG_t LOGx, LOG_Level_t Level );
 
-    LOG_Status_t LOG_Instance_Write( LOG_Instance_t * Instance, LOG_Level_t Level, LOG_Format_t Format, LOG_Args_t Args );
+    LOG_Status_t LOG_Port_Write( LOG_t LOGx, LOG_Level_t Level, LOG_Format_t Format, LOG_Args_t Args );
 
     // TODO Add More APIs
 

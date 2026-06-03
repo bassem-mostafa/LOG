@@ -77,35 +77,6 @@
 // #### Public Method(s) #######################################################
 // #############################################################################
 
-LOG_Status_t LOG_Level_IsValid( LOG_Level_t Level )
-{
-    LOG_Status_t Status = LOG_Status_Error;
-
-    do
-    {
-        switch ( Level )
-        {
-            case LOG_Level_Default:
-            case LOG_Level_Trace:
-            case LOG_Level_Debug:
-            case LOG_Level_Information:
-            case LOG_Level_Warning:
-            case LOG_Level_Error:
-            case LOG_Level_Fatal:
-            case LOG_Level_None:
-                Status = LOG_Status_Success;
-                break;
-
-            default:
-                Status = LOG_Status_ArgumentInvalid;
-                break;
-        }
-    }
-    while ( 0 );
-
-    return Status;
-}
-
 // #############################################################################
 // #### Public Variable(s) #####################################################
 // #############################################################################

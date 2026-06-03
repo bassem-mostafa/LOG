@@ -64,7 +64,6 @@
 
 typedef struct LOG_Context
 {
-    LOG_Instance_t Instance[ LOG_Count ];
 } LOG_Context_t;
 
 // #############################################################################
@@ -87,16 +86,11 @@ static LOG_Context_t LOG_Context;
 
 static LOG_Status_t LOG_Context_Initialize( void )
 {
-    LOG_Status_t Status = LOG_Status_Error;
+    LOG_Status_t Status = LOG_Status_Success;
 
     do
     {
-        for ( LOG_t LOG_x = LOG_Null; LOG_x < LOG_Count; ++LOG_x )
-        {
-            LOG_Context.Instance[ LOG_x ].LOGx = LOG_x;
-        }
-
-        Status = LOG_Status_Success;
+        UTIL_UNUSED( LOG_Context );
     }
     while ( 0 );
 
@@ -105,11 +99,11 @@ static LOG_Status_t LOG_Context_Initialize( void )
 
 static LOG_Status_t LOG_Context_Cycle( void )
 {
-    LOG_Status_t Status = LOG_Status_Error;
+    LOG_Status_t Status = LOG_Status_Success;
 
     do
     {
-        Status = LOG_Status_Success;
+        UTIL_UNUSED( LOG_Context );
     }
     while ( 0 );
 
@@ -118,11 +112,11 @@ static LOG_Status_t LOG_Context_Cycle( void )
 
 static LOG_Status_t LOG_Context_DeInitialize( void )
 {
-    LOG_Status_t Status = LOG_Status_Error;
+    LOG_Status_t Status = LOG_Status_Success;
 
     do
     {
-        Status = LOG_Status_Success;
+        UTIL_UNUSED( LOG_Context );
     }
     while ( 0 );
 
@@ -135,15 +129,11 @@ static LOG_Status_t LOG_Context_DeInitialize( void )
 
 LOG_Status_t LOG_Initialize( LOG_t LOGx )
 {
-    LOG_Status_t Status = LOG_Status_Error;
+    LOG_Status_t Status = LOG_Status_Success;
+    LOG_Status_t LOG_Status = LOG_Status_Success;
 
     do
     {
-        if ( ( Status = LOG_IsValid( LOGx ) ) != LOG_Status_Success )
-        {
-            break;
-        }
-
         if ( ( Status = LOG_Context_Initialize( ) ) != LOG_Status_Success )
         {
             break;
@@ -156,8 +146,7 @@ LOG_Status_t LOG_Initialize( LOG_t LOGx )
                 continue;
             }
 
-            LOG_Status_t LOG_Status = LOG_Status_Success;
-            if ( ( LOG_Status = LOG_Instance_Initialize( &LOG_Context.Instance[ LOG_x ] ) ) != LOG_Status_Success )
+            if ( ( LOG_Status = LOG_Port_Initialize( LOG_x ) ) != LOG_Status_Success )
             {
                 Status = LOG_Status;
             }
@@ -170,15 +159,11 @@ LOG_Status_t LOG_Initialize( LOG_t LOGx )
 
 LOG_Status_t LOG_Cycle( LOG_t LOGx )
 {
-    LOG_Status_t Status = LOG_Status_Error;
+    LOG_Status_t Status = LOG_Status_Success;
+    LOG_Status_t LOG_Status = LOG_Status_Success;
 
     do
     {
-        if ( ( Status = LOG_IsValid( LOGx ) ) != LOG_Status_Success )
-        {
-            break;
-        }
-
         if ( ( Status = LOG_Context_Cycle( ) ) != LOG_Status_Success )
         {
             break;
@@ -191,8 +176,7 @@ LOG_Status_t LOG_Cycle( LOG_t LOGx )
                 continue;
             }
 
-            LOG_Status_t LOG_Status = LOG_Status_Success;
-            if ( ( LOG_Status = LOG_Instance_Cycle( &LOG_Context.Instance[ LOG_x ] ) ) != LOG_Status_Success )
+            if ( ( LOG_Status = LOG_Port_Cycle( LOG_x ) ) != LOG_Status_Success )
             {
                 Status = LOG_Status;
             }
@@ -205,15 +189,11 @@ LOG_Status_t LOG_Cycle( LOG_t LOGx )
 
 LOG_Status_t LOG_DeInitialize( LOG_t LOGx )
 {
-    LOG_Status_t Status = LOG_Status_Error;
+    LOG_Status_t Status = LOG_Status_Success;
+    LOG_Status_t LOG_Status = LOG_Status_Success;
 
     do
     {
-        if ( ( Status = LOG_IsValid( LOGx ) ) != LOG_Status_Success )
-        {
-            break;
-        }
-
         for ( LOG_t LOG_x = LOG_Null; LOG_x < LOG_Count; ++LOG_x )
         {
             if ( LOGx != LOG_All && LOGx != LOG_x )
@@ -221,8 +201,7 @@ LOG_Status_t LOG_DeInitialize( LOG_t LOGx )
                 continue;
             }
 
-            LOG_Status_t LOG_Status = LOG_Status_Success;
-            if ( ( LOG_Status = LOG_Instance_DeInitialize( &LOG_Context.Instance[ LOG_x ] ) ) != LOG_Status_Success )
+            if ( ( LOG_Status = LOG_Port_DeInitialize( LOG_x ) ) != LOG_Status_Success )
             {
                 Status = LOG_Status;
             }
@@ -237,20 +216,11 @@ LOG_Status_t LOG_DeInitialize( LOG_t LOGx )
 
 LOG_Status_t LOG_SetLevel( LOG_t LOGx, LOG_Level_t Level )
 {
-    LOG_Status_t Status = LOG_Status_Error;
+    LOG_Status_t Status = LOG_Status_Success;
+    LOG_Status_t LOG_Status = LOG_Status_Success;
 
     do
     {
-        if ( ( Status = LOG_IsValid( LOGx ) ) != LOG_Status_Success )
-        {
-            break;
-        }
-
-        if ( ( Status = LOG_Level_IsValid( Level ) ) != LOG_Status_Success )
-        {
-            break;
-        }
-
         if ( Level == LOG_Level_Default )
         {
             Level = LOG_Level_Information;
@@ -263,10 +233,11 @@ LOG_Status_t LOG_SetLevel( LOG_t LOGx, LOG_Level_t Level )
                 continue;
             }
 
-            LOG_Context.Instance[ LOG_x ].Level = Level;
+            if ( ( LOG_Status = LOG_Port_SetLevel( LOG_x, Level ) ) != LOG_Status_Success )
+            {
+                Status = LOG_Status;
+            }
         }
-
-        Status = LOG_Status_Success;
     }
     while ( 0 );
 
@@ -275,7 +246,7 @@ LOG_Status_t LOG_SetLevel( LOG_t LOGx, LOG_Level_t Level )
 
 LOG_Status_t LOG_Trace( LOG_t LOGx, LOG_Format_t Format, ... )
 {
-    LOG_Status_t Status = LOG_Status_Error;
+    LOG_Status_t Status = LOG_Status_Success;
 
     do
     {
@@ -291,7 +262,7 @@ LOG_Status_t LOG_Trace( LOG_t LOGx, LOG_Format_t Format, ... )
 
 LOG_Status_t LOG_Debug( LOG_t LOGx, LOG_Format_t Format, ... )
 {
-    LOG_Status_t Status = LOG_Status_Error;
+    LOG_Status_t Status = LOG_Status_Success;
 
     do
     {
@@ -307,7 +278,7 @@ LOG_Status_t LOG_Debug( LOG_t LOGx, LOG_Format_t Format, ... )
 
 LOG_Status_t LOG_Info( LOG_t LOGx, LOG_Format_t Format, ... )
 {
-    LOG_Status_t Status = LOG_Status_Error;
+    LOG_Status_t Status = LOG_Status_Success;
 
     do
     {
@@ -323,7 +294,7 @@ LOG_Status_t LOG_Info( LOG_t LOGx, LOG_Format_t Format, ... )
 
 LOG_Status_t LOG_Warning( LOG_t LOGx, LOG_Format_t Format, ... )
 {
-    LOG_Status_t Status = LOG_Status_Error;
+    LOG_Status_t Status = LOG_Status_Success;
 
     do
     {
@@ -339,7 +310,7 @@ LOG_Status_t LOG_Warning( LOG_t LOGx, LOG_Format_t Format, ... )
 
 LOG_Status_t LOG_Error( LOG_t LOGx, LOG_Format_t Format, ... )
 {
-    LOG_Status_t Status = LOG_Status_Error;
+    LOG_Status_t Status = LOG_Status_Success;
 
     do
     {
@@ -355,7 +326,7 @@ LOG_Status_t LOG_Error( LOG_t LOGx, LOG_Format_t Format, ... )
 
 LOG_Status_t LOG_Fatal( LOG_t LOGx, LOG_Format_t Format, ... )
 {
-    LOG_Status_t Status = LOG_Status_Error;
+    LOG_Status_t Status = LOG_Status_Success;
 
     do
     {
@@ -371,7 +342,7 @@ LOG_Status_t LOG_Fatal( LOG_t LOGx, LOG_Format_t Format, ... )
 
 LOG_Status_t LOG_Raw( LOG_t LOGx, LOG_Level_t Level, LOG_Format_t Format, ... )
 {
-    LOG_Status_t Status = LOG_Status_Error;
+    LOG_Status_t Status = LOG_Status_Success;
 
     do
     {
@@ -387,7 +358,7 @@ LOG_Status_t LOG_Raw( LOG_t LOGx, LOG_Level_t Level, LOG_Format_t Format, ... )
 
 LOG_Status_t LOG_TraceWithArgs( LOG_t LOGx, LOG_Format_t Format, LOG_Args_t Args )
 {
-    LOG_Status_t Status = LOG_Status_Error;
+    LOG_Status_t Status = LOG_Status_Success;
 
     do
     {
@@ -400,7 +371,7 @@ LOG_Status_t LOG_TraceWithArgs( LOG_t LOGx, LOG_Format_t Format, LOG_Args_t Args
 
 LOG_Status_t LOG_DebugWithArgs( LOG_t LOGx, LOG_Format_t Format, LOG_Args_t Args )
 {
-    LOG_Status_t Status = LOG_Status_Error;
+    LOG_Status_t Status = LOG_Status_Success;
 
     do
     {
@@ -413,7 +384,7 @@ LOG_Status_t LOG_DebugWithArgs( LOG_t LOGx, LOG_Format_t Format, LOG_Args_t Args
 
 LOG_Status_t LOG_InfoWithArgs( LOG_t LOGx, LOG_Format_t Format, LOG_Args_t Args )
 {
-    LOG_Status_t Status = LOG_Status_Error;
+    LOG_Status_t Status = LOG_Status_Success;
 
     do
     {
@@ -426,7 +397,7 @@ LOG_Status_t LOG_InfoWithArgs( LOG_t LOGx, LOG_Format_t Format, LOG_Args_t Args 
 
 LOG_Status_t LOG_WarningWithArgs( LOG_t LOGx, LOG_Format_t Format, LOG_Args_t Args )
 {
-    LOG_Status_t Status = LOG_Status_Error;
+    LOG_Status_t Status = LOG_Status_Success;
 
     do
     {
@@ -439,7 +410,7 @@ LOG_Status_t LOG_WarningWithArgs( LOG_t LOGx, LOG_Format_t Format, LOG_Args_t Ar
 
 LOG_Status_t LOG_ErrorWithArgs( LOG_t LOGx, LOG_Format_t Format, LOG_Args_t Args )
 {
-    LOG_Status_t Status = LOG_Status_Error;
+    LOG_Status_t Status = LOG_Status_Success;
 
     do
     {
@@ -452,7 +423,7 @@ LOG_Status_t LOG_ErrorWithArgs( LOG_t LOGx, LOG_Format_t Format, LOG_Args_t Args
 
 LOG_Status_t LOG_FatalWithArgs( LOG_t LOGx, LOG_Format_t Format, LOG_Args_t Args )
 {
-    LOG_Status_t Status = LOG_Status_Error;
+    LOG_Status_t Status = LOG_Status_Success;
 
     do
     {
@@ -465,25 +436,11 @@ LOG_Status_t LOG_FatalWithArgs( LOG_t LOGx, LOG_Format_t Format, LOG_Args_t Args
 
 LOG_Status_t LOG_RawWithArgs( LOG_t LOGx, LOG_Level_t Level, LOG_Format_t Format, LOG_Args_t Args )
 {
-    LOG_Status_t Status = LOG_Status_Error;
+    LOG_Status_t Status = LOG_Status_Success;
+    LOG_Status_t LOG_Status = LOG_Status_Success;
 
     do
     {
-        if ( ( Status = LOG_IsValid( LOGx ) ) != LOG_Status_Success )
-        {
-            break;
-        }
-
-        if ( ( Status = LOG_Level_IsValid( Level ) ) != LOG_Status_Success )
-        {
-            break;
-        }
-
-        if ( Level == LOG_Level_Default )
-        {
-            Level = LOG_Level_Information;
-        }
-
         for ( LOG_t LOG_x = LOG_Null; LOG_x < LOG_Count; ++LOG_x )
         {
             if ( LOGx != LOG_All && LOGx != LOG_x )
@@ -491,16 +448,7 @@ LOG_Status_t LOG_RawWithArgs( LOG_t LOGx, LOG_Level_t Level, LOG_Format_t Format
                 continue;
             }
 
-            LOG_Instance_t * Instance = &LOG_Context.Instance[ LOG_x ];
-
-            if ( Level < Instance->Level )
-            {
-                // skip the logging
-                continue;
-            }
-
-            LOG_Status_t LOG_Status = LOG_Status_Success;
-            if ( ( LOG_Status = LOG_Instance_Write( Instance, Level, Format, Args ) ) != LOG_Status_Success )
+            if ( ( LOG_Status = LOG_Port_Write( LOGx, Level, Format, Args ) ) != LOG_Status_Success )
             {
                 Status = LOG_Status;
             }
@@ -515,7 +463,7 @@ LOG_Status_t LOG_RawWithArgs( LOG_t LOGx, LOG_Level_t Level, LOG_Format_t Format
 // #### Public Variable(s) #####################################################
 // #############################################################################
 
-const char LOG_VERSION[] = "0.0.0.v20260524-1454";
+const char LOG_VERSION[] = "0.0.0.v20260603-1011";
 
 // #############################################################################
 // #### File Guard #############################################################
